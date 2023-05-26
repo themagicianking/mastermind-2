@@ -1,5 +1,5 @@
 module GeneratePuzzle
-  def puzzle
+  def puzzle_maker
     puzzle = []
     color = "none"
     for i in 1..4
@@ -21,11 +21,12 @@ end
 
 class Game
   include GeneratePuzzle
-  attr_reader :guess, :puzzle
+  attr_reader :guess, :hint, :puzzle
 
   def initialize
     @guess = []
-    @puzzle = puzzle
+    @hint = {1 => "-", 2 => "-", 3 => "-", 4 => "-"}
+    @puzzle = puzzle_maker
     puts "Hello! Welcome to mastermind."
     puts "I will generate a puzzle for you to solve."
     puts "The puzzle will be four colors: R (red), Y (yellow), G (green), or B (blue)."
@@ -45,21 +46,35 @@ class Game
     @guess.push(gets.chomp)
   end
 
-  def guess
-    @guess
+  def check_win(hint)
+    hint == {1 => "X", 2 => "X", 3 => "X", 4 => "X"} ? true : false
   end
 
-  def check_win(guess, puzzle)
-    guess == puzzle ? true : false
+  def new_turn
+    @guess = []
+    @hint = {1 => "-", 2 => "-", 3 => "-", 4 => "-"}
+  end
+
+  def give_hints
+    @guess.each_with_index do |color, index|
+      if color == @puzzle[index]
+        @hint[index + 1] = "X"
+      end
+    end
+    pp @hint
   end
 end
 
 def play_game
   new_game = Game.new
-  while new_game.check_win(new_game.guess, new_game.puzzle) == false
+  while new_game.check_win(new_game.hint) == false
+    new_game.new_turn
     new_game.get_guess
-    new_game.check_win(new_game.guess, new_game.puzzle)
+    pp new_game.hint
+    new_game.check_win(new_game.hint)
+    new_game.give_hints
   end
+  puts "You guessed it! Good job!"
 end
 
 play_game
