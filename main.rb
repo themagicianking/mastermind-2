@@ -37,13 +37,17 @@ class Game
 
   def get_guess
     puts "Please enter your first guess:"
-    @guess.push(gets.chomp)
+    choice = gets.chomp.upcase
+    @guess.push(choice)
     puts "Please enter your second guess:"
-    @guess.push(gets.chomp)
+    choice = gets.chomp.upcase
+    @guess.push(choice)
     puts "Please enter your third guess:"
-    @guess.push(gets.chomp)
+    choice = gets.chomp.upcase
+    @guess.push(choice)
     puts "Please enter your last guess:"
-    @guess.push(gets.chomp)
+    choice = gets.chomp.upcase
+    @guess.push(choice)
   end
 
   def check_win(hint)
@@ -55,26 +59,37 @@ class Game
     @hint = {1 => "-", 2 => "-", 3 => "-", 4 => "-"}
   end
 
-  def give_hints
-    @guess.each_with_index do |color, index|
-      if color == @puzzle[index]
-        @hint[index + 1] = "X"
+  def give_hints(guess, hint, puzzle)
+    guess.each_with_index do |color, index|
+      if color == puzzle[index]
+        hint[index + 1] = "X"
+      elsif puzzle.include? color
+        hint[index + 1] = "O"
+      else
       end
     end
-    pp @hint
+    pp hint.values
   end
 end
 
+def play_again?
+  puts "Would you like to play? Y or N. Invalid input will terminate game."
+  gets.chomp.upcase == "Y" ? true : false
+end
+
 def play_game
-  new_game = Game.new
-  while new_game.check_win(new_game.hint) == false
-    new_game.new_turn
-    new_game.get_guess
-    pp new_game.hint
-    new_game.check_win(new_game.hint)
-    new_game.give_hints
+  while play_again? == true
+    new_game = Game.new
+    while new_game.check_win(new_game.hint) == false
+      new_game.new_turn
+      new_game.get_guess
+      new_game.hint
+      new_game.check_win(new_game.hint)
+      new_game.give_hints(new_game.guess, new_game.hint, new_game.puzzle)
+    end
+    puts "You guessed it! Good job!"
+    play_again?
   end
-  puts "You guessed it! Good job!"
 end
 
 play_game
