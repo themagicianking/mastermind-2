@@ -88,7 +88,6 @@ def play_game
       new_game.give_hints(new_game.guess, new_game.hint, new_game.puzzle)
     end
     puts "You guessed it! Good job!"
-    play_again?
   end
 end
 
