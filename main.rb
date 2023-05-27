@@ -145,33 +145,30 @@ end
 
 new_game = Game.new
 new_game.start
-new_game.get_puzzle
-puts "Here is my guess:"
-pp new_game.guess = new_game.puzzle_maker
-new_game.hint = new_game.get_hint
-if new_game.check_win(new_game.hint)
-  puts "I guessed it!"
-else
+if new_game.type == "G"
   while new_game.check_win(new_game.hint) == false
+    new_game.new_turn
+    new_game.get_guess
+    new_game.hint
     new_game.check_win(new_game.hint)
-    new_game.guess = new_game.guess_maker(new_game.hint, new_game.guess)
-    puts "Here is my guess:"
-    pp new_game.guess
-    new_game.hint = new_game.get_hint
+    new_game.give_hints(new_game.guess, new_game.hint, new_game.puzzle)
   end
-  puts "I guessed it!"
+  puts "You guessed it!"
+else
+  new_game.get_puzzle
+  puts "Here is my guess:"
+  pp new_game.guess = new_game.puzzle_maker
+  new_game.hint = new_game.get_hint
+  if new_game.check_win(new_game.hint)
+    puts "I guessed it!"
+  else
+    while new_game.check_win(new_game.hint) == false
+      new_game.check_win(new_game.hint)
+      new_game.guess = new_game.guess_maker(new_game.hint, new_game.guess)
+      puts "Here is my guess:"
+      pp new_game.guess
+      new_game.hint = new_game.get_hint
+    end
+    puts "I guessed it!"
+  end
 end
-
-#while new_game.continue
-  # new_game.start
-  #if new_game.type == "G"
-    #new_game.new_turn
-    #new_game.get_guess
-    #new_game.hint
-    #new_game.check_win(new_game.hint)
-    #new_game.give_hints(new_game.guess, new_game.hint, new_game.puzzle)
-  #else
-    # code for playing w the computer
-  #end
-  # new_game.play_again?
-#end
