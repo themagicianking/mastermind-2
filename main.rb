@@ -18,21 +18,42 @@ module GeneratePuzzle
     puzzle
   end
 
-  def guess_maker(hint)
-    # takes user's hint (turned into a hash) and creates a new hash with colors based on it
+  def guess_maker(hint, guess)
+    new_guess = []
+    guess.each_with_index do |color, index|
+      if hint[index + 1] == "-"
+        @possible_colors.delete(color)
+      end
+    end
+    guess.each_with_index do |color, index|
+      if hint[index + 1] == "-" || hint[index + 1] == "O"
+        new_guess.push(@possible_colors.sample)
+      else
+        new_guess.push(color)
+      end
+    end
+    new_guess
   end
 end
 
 class Game
   include GeneratePuzzle
-  attr_reader :guess, :hint, :puzzle
+  attr_reader :guess, :hint, :puzzle, :type, :continue, :possible_colors
+  attr_writer :guess, :hint
 
   def initialize
     @guess = []
     @hint = {1 => "-", 2 => "-", 3 => "-", 4 => "-"}
-    @puzzle = puzzle_maker
+    puts "Would you like to play? Y or N. Invalid input will terminate game."
+    @continue = gets.chomp.upcase == "Y" ? true : false
     puts "Would you like to be the guesser or the puzzle master? Select G or P."
     @type = gets.chomp.upcase
+    if @type == "G"
+      @puzzle = puzzle_maker
+    else
+      @puzzle = []
+      @possible_colors = ["R", "Y", "G", "B"]
+    end
   end
 
   def start
@@ -115,25 +136,32 @@ class Game
     end
     pp hint.values
   end
-end
 
-def play_again?
-  puts "Would you like to play? Y or N. Invalid input will terminate game."
-  gets.chomp.upcase == "Y" ? true : false
-end
-
-def play_user_game
-  new_game.new_turn
-  new_game.get_guess
-  new_game.hint
-  new_game.check_win(new_game.hint)
-  new_game.give_hints(new_game.guess, new_game.hint, new_game.puzzle)
-    puts "You guessed it! Good job!"
+  def play_again?
+    puts "Would you like to play? Y or N. Invalid input will terminate game."
+    @continue = gets.chomp.upcase == "Y" ? true : false
   end
-end
-
-def play_computer_game
 end
 
 new_game = Game.new
 new_game.start
+new_game.get_puzzle
+puts "Here is my guess:"
+pp new_game.guess = new_game.puzzle_maker
+new_game.hint = new_game.get_hint
+pp new_game.guess_maker(new_game.hint, new_game.guess)
+pp new_game.possible_colors
+
+#while new_game.continue
+  # new_game.start
+  #if new_game.type == "G"
+    #new_game.new_turn
+    #new_game.get_guess
+    #new_game.hint
+    #new_game.check_win(new_game.hint)
+    #new_game.give_hints(new_game.guess, new_game.hint, new_game.puzzle)
+  #else
+    # code for playing w the computer
+  #end
+  # new_game.play_again?
+#end
