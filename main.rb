@@ -38,14 +38,12 @@ end
 
 class Game
   include GeneratePuzzle
-  attr_reader :guess, :hint, :puzzle, :type, :continue, :possible_colors
+  attr_reader :guess, :hint, :puzzle, :type, :possible_colors
   attr_writer :guess, :hint
 
   def initialize
     @guess = []
     @hint = {1 => "-", 2 => "-", 3 => "-", 4 => "-"}
-    puts "Would you like to play? Y or N. Invalid input will terminate game."
-    @continue = gets.chomp.upcase == "Y" ? true : false
     puts "Would you like to be the guesser or the puzzle master? Select G or P."
     @type = gets.chomp.upcase
     if @type == "G"
@@ -136,39 +134,42 @@ class Game
     end
     pp hint.values
   end
-
-  def play_again?
-    puts "Would you like to play? Y or N. Invalid input will terminate game."
-    @continue = gets.chomp.upcase == "Y" ? true : false
-  end
 end
 
-new_game = Game.new
-new_game.start
-if new_game.type == "G"
-  while new_game.check_win(new_game.hint) == false
-    new_game.new_turn
-    new_game.get_guess
-    new_game.hint
-    new_game.check_win(new_game.hint)
-    new_game.give_hints(new_game.guess, new_game.hint, new_game.puzzle)
-  end
-  puts "You guessed it!"
-else
-  new_game.get_puzzle
-  puts "Here is my guess:"
-  pp new_game.guess = new_game.puzzle_maker
-  new_game.hint = new_game.get_hint
-  if new_game.check_win(new_game.hint)
-    puts "I guessed it!"
-  else
+def play_again?
+  puts "Would you like to play? Y or N. Invalid input will terminate game."
+  continue = gets.chomp.upcase == "Y" ? true : false
+end
+
+while play_again?
+  new_game = Game.new
+  new_game.start
+  if new_game.type == "G"
     while new_game.check_win(new_game.hint) == false
+      new_game.new_turn
+      new_game.get_guess
+      new_game.hint
       new_game.check_win(new_game.hint)
-      new_game.guess = new_game.guess_maker(new_game.hint, new_game.guess)
-      puts "Here is my guess:"
-      pp new_game.guess
-      new_game.hint = new_game.get_hint
+      new_game.give_hints(new_game.guess, new_game.hint, new_game.puzzle)
     end
-    puts "I guessed it!"
+    puts "You guessed it!"
+
+  else
+    new_game.get_puzzle
+    puts "Here is my guess:"
+    pp new_game.guess = new_game.puzzle_maker
+    new_game.hint = new_game.get_hint
+    if new_game.check_win(new_game.hint)
+      puts "I guessed it!"
+    else
+      while new_game.check_win(new_game.hint) == false
+        new_game.check_win(new_game.hint)
+        new_game.guess = new_game.guess_maker(new_game.hint, new_game.guess)
+        puts "Here is my guess:"
+        pp new_game.guess
+        new_game.hint = new_game.get_hint
+      end
+      puts "I guessed it!"
+    end
   end
 end
