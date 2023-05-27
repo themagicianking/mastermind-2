@@ -17,6 +17,10 @@ module GeneratePuzzle
     end
     puzzle
   end
+
+  def guess_maker(hint)
+    # takes user's hint (turned into a hash) and creates a new hash with colors based on it
+  end
 end
 
 class Game
@@ -27,12 +31,26 @@ class Game
     @guess = []
     @hint = {1 => "-", 2 => "-", 3 => "-", 4 => "-"}
     @puzzle = puzzle_maker
+    puts "Would you like to be the guesser or the puzzle master? Select G or P."
+    @type = gets.chomp.upcase
+  end
+
+  def start
     puts "Hello! Welcome to mastermind."
-    puts "I will generate a puzzle for you to solve."
-    puts "The puzzle will be four colors: R (red), Y (yellow), G (green), or B (blue)."
-    puts "Any of these may be repeated."
-    puts "Enter your guess and I will tell you if you got it right!"
-    puts "X means right color right place. O means right color wrong place. - means the color is not in the puzzle."
+    if @type == "G"
+      puts "I will generate a puzzle for you to solve."
+      puts "The puzzle will be four colors: R (red), Y (yellow), G (green), or B (blue)."
+      puts "Any of these may be repeated."
+      puts "Enter your guess and I will tell you if you got it right!"
+      puts "X means right color right place. O means right color wrong place. - means the color is not in the puzzle."
+    else
+      puts "Create a puzzle, and I will solve it."
+      puts "The puzzle will be four colors: R (red), Y (yellow), G (green), or B (blue)."
+      puts "Any of these may be repeated."
+      puts "Enter your puzzle and I will try to guess what it is!"
+      puts "After I guess, I will ask you to give me a hint."
+      puts "X means right color right place. O means right color wrong place. - means the color is not in the puzzle."
+    end
   end
 
   def get_guess
@@ -48,6 +66,33 @@ class Game
     puts "Please enter your last guess:"
     choice = gets.chomp.upcase
     @guess.push(choice)
+  end
+
+  def get_puzzle
+    puts "Please enter your first color:"
+    choice = gets.chomp.upcase
+    @puzzle.push(choice)
+    puts "Please enter your second color:"
+    choice = gets.chomp.upcase
+    @puzzle.push(choice)
+    puts "Please enter your third color:"
+    choice = gets.chomp.upcase
+    @puzzle.push(choice)
+    puts "Please enter your last color:"
+    choice = gets.chomp.upcase
+    @puzzle.push(choice)
+  end
+
+  def get_hint
+    puts "How did I do? Please input X, O, or - for my first color:"
+    @hint[1] = gets.chomp.upcase
+    puts "Please input X, O, or - for my second color:"
+    @hint[2] = gets.chomp.upcase
+    puts "Please input X, O, or - for my third color:"
+    @hint[3] = gets.chomp.upcase
+    puts "Please input X, O, or - for my last color:"
+    @hint[4] = gets.chomp.upcase
+    @hint
   end
 
   def check_win(hint)
@@ -77,18 +122,18 @@ def play_again?
   gets.chomp.upcase == "Y" ? true : false
 end
 
-def play_game
-  while play_again? == true
-    new_game = Game.new
-    while new_game.check_win(new_game.hint) == false
-      new_game.new_turn
-      new_game.get_guess
-      new_game.hint
-      new_game.check_win(new_game.hint)
-      new_game.give_hints(new_game.guess, new_game.hint, new_game.puzzle)
-    end
+def play_user_game
+  new_game.new_turn
+  new_game.get_guess
+  new_game.hint
+  new_game.check_win(new_game.hint)
+  new_game.give_hints(new_game.guess, new_game.hint, new_game.puzzle)
     puts "You guessed it! Good job!"
   end
 end
 
-play_game
+def play_computer_game
+end
+
+new_game = Game.new
+new_game.start
