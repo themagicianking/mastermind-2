@@ -149,8 +149,18 @@ new_game.get_puzzle
 puts "Here is my guess:"
 pp new_game.guess = new_game.puzzle_maker
 new_game.hint = new_game.get_hint
-pp new_game.guess_maker(new_game.hint, new_game.guess)
-pp new_game.possible_colors
+if new_game.check_win(new_game.hint)
+  puts "I guessed it!"
+else
+  while new_game.check_win(new_game.hint) == false
+    new_game.check_win(new_game.hint)
+    new_game.guess = new_game.guess_maker(new_game.hint, new_game.guess)
+    puts "Here is my guess:"
+    pp new_game.guess
+    new_game.hint = new_game.get_hint
+  end
+  puts "I guessed it!"
+end
 
 #while new_game.continue
   # new_game.start
