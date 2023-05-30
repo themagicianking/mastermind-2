@@ -38,7 +38,7 @@ end
 
 class Game
   include GeneratePuzzle
-  attr_reader :guess, :hint, :puzzle, :type, :possible_colors
+  attr_reader :guess, :hint, :puzzle, :type, :possible_colors, :choice
   attr_writer :guess, :hint
 
   def initialize
@@ -46,9 +46,13 @@ class Game
     @hint = {1 => "-", 2 => "-", 3 => "-", 4 => "-"}
     puts "Would you like to be the guesser or the puzzle master? Select G or P."
     @type = gets.chomp.upcase
+    if @type != "G" && @type != "P"
+      puts "Invalid input! A role has been chosen for you."
+      @type = ["G", "P"].sample
+    end
     if @type == "G"
       @puzzle = puzzle_maker
-    else
+    elsif @type == "P"
       @puzzle = []
       @possible_colors = ["R", "Y", "G", "B"]
     end
@@ -87,30 +91,54 @@ class Game
     @guess.push(choice)
   end
 
+  def check_valid_choice(choice)
+    while choice != "R" && choice != "Y" && choice != "G" && choice != "B"
+      puts "Invalid input! Please select either R, Y, G, or B."
+      choice = gets.chomp.upcase
+    end
+    @choice = choice
+  end
+
   def get_puzzle
     puts "Please enter your first color:"
-    choice = gets.chomp.upcase
-    @puzzle.push(choice)
+    @choice = gets.chomp.upcase
+    check_valid_choice(@choice)
+    @puzzle.push(@choice)
     puts "Please enter your second color:"
-    choice = gets.chomp.upcase
-    @puzzle.push(choice)
+    @choice = gets.chomp.upcase
+    check_valid_choice(@choice)
+    @puzzle.push(@choice)
     puts "Please enter your third color:"
-    choice = gets.chomp.upcase
-    @puzzle.push(choice)
+    @choice = gets.chomp.upcase
+    check_valid_choice(@choice)
+    @puzzle.push(@choice)
     puts "Please enter your last color:"
-    choice = gets.chomp.upcase
-    @puzzle.push(choice)
+    @choice = gets.chomp.upcase
+    check_valid_choice(@choice)
+    @puzzle.push(@choice)
+  end
+
+  def check_valid_hint(hint, index)
+    while hint != "X" && hint != "O" && choice != "-"
+      puts "Invalid input! Please select either X, O, or -."
+      hint = gets.chomp.upcase
+    end
+    @hint[index] = hint
   end
 
   def get_hint
     puts "How did I do? Please input X, O, or - for my first color:"
     @hint[1] = gets.chomp.upcase
+    check_valid_hint(@hint[1], 1)
     puts "Please input X, O, or - for my second color:"
     @hint[2] = gets.chomp.upcase
+    check_valid_hint(@hint[2], 2)
     puts "Please input X, O, or - for my third color:"
     @hint[3] = gets.chomp.upcase
+    check_valid_hint(@hint[3], 3)
     puts "Please input X, O, or - for my last color:"
     @hint[4] = gets.chomp.upcase
+    check_valid_hint(@hint[4], 4)
     @hint
   end
 
